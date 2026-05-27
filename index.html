@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>中原大學循環杯地圖 (Canva 極致優化版)</title>
+    <title>中原大學循環杯地圖</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         * {
@@ -134,14 +134,14 @@
 
 <div class="app-card">
     <div class="header">
-        <h1>🌲 CYCU 中原大學循環杯地圖</h1>
+        <h1>CYCU中原大學循環杯地圖</h1>
     </div>
     
     <div class="control-panel">
         <select id="location-select" onchange="updateLocation()">
-            <option value="">📍 請選擇您目前的位置...</option>
+            <option value="">請選擇您目前的位置...</option>
             <option value="gate">中原大學校門口</option>
-            <option value="lixing">力行宿舍 (體育館旁)</option>
+            <option value="lixing">力行宿舍</option>
             <option value="zhenzhi">真知教學大樓</option>
             <option value="liangshan">良善宿舍</option>
         </select>
@@ -169,7 +169,7 @@
     // 【位置校正】力行宿舍座標已往南修正至新體育館與體育場旁路段
     const userLocations = {
         gate: { name: "中原大學校門口", coords: [24.9582, 121.2408] },
-        lixing: { name: "力行宿舍 (體育館旁)", coords: [24.9592, 121.2422] }, 
+        lixing: { name: "力行宿舍", coords: [24.9592, 121.2422] }, 
         zhenzhi: { name: "真知教學大樓", coords: [24.9571, 121.2406] },
         liangshan: { name: "良善宿舍", coords: [24.9565, 121.2425] }
     };
