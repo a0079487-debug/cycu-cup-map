@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>中原大學周遭循環杯地圖 (質感藍調版)</title>
+    <title>中原大學循環杯地圖 (Canva 極致優化版)</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         * {
@@ -12,80 +12,88 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             margin: 0;
-            padding: 15px;
-            /* 背景全面改為深藍色漸層，讓 Canva 呈現時非常搶眼 */
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            padding: 10px;
+            /* 科技感深邃藍黑漸層背景 */
+            background: linear-gradient(135deg, #070b19, #10172a);
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
         .app-card {
-            background: #ffffff;
+            background: #111827; /* 內層卡片深灰色 */
             border-radius: 20px;
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
             width: 100%;
             height: 100%;
             max-width: 480px; 
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         .header {
-            /* 標頭改為明亮的皇家藍 */
-            background: #1d3557;
-            color: #f1faee;
-            padding: 16px;
+            background: #0f172a;
+            color: #38bdf8; /* 亮天藍色標題 */
+            padding: 15px;
             text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         .header h1 {
             margin: 0;
-            font-size: 19px;
+            font-size: 18px;
             font-weight: 600;
             letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
         }
         .control-panel {
-            padding: 14px;
-            /* 搭配主題，選單背景改為淡藍灰色 */
-            background: #f0f4f8;
-            border-bottom: 1px solid #d0d7de;
+            padding: 12px;
+            background: #111827;
         }
         select {
             width: 100%;
             padding: 12px;
             font-size: 14px;
-            border: 2px solid #4a90e2;
-            border-radius: 10px;
-            background-color: white;
-            color: #1d3557;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            background-color: #1e293b;
+            color: #ffffff;
             font-weight: 500;
             cursor: pointer;
             outline: none;
             transition: all 0.3s ease;
         }
         select:focus {
-            border-color: #0077b6;
-            box-shadow: 0 0 8px rgba(0, 119, 182, 0.3);
+            border-color: #38bdf8;
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
         }
         #map {
             flex-grow: 1; 
             width: 100%;
             z-index: 1;
         }
+        /* Leaflet 彈出視窗 Dark Mode 樣式優化 */
+        .leaflet-popup-content-wrapper {
+            background: #1e293b !important;
+            color: #ffffff !important;
+            border: 1px solid #38bdf8;
+            border-radius: 10px;
+            font-size: 13px;
+        }
+        .leaflet-popup-tip {
+            background: #1e293b !important;
+        }
         .info-panel {
             padding: 14px;
-            background: #ffffff;
-            max-height: 190px;
+            background: #0f172a; /* 底部店家列表背景 */
+            max-height: 180px;
             overflow-y: auto; 
-            border-top: 1px solid #e1e8ed;
         }
         .shop-item {
             padding: 10px 0;
-            border-bottom: 1px solid #f0f4f8;
-            font-size: 13.5px;
-            transition: background 0.2s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 13px;
         }
         .shop-item:last-child {
             border-bottom: none;
@@ -98,27 +106,27 @@
         }
         .shop-name {
             font-weight: bold;
-            color: #1d3557; /* 店名用深藍色強調 */
+            color: #ffffff;
         }
         .shop-distance {
-            color: #e63946; /* 距離用醒目的紅色標示 */
+            color: #38bdf8; /* 距離全面改用公尺標示 */
             font-weight: 600;
-            background: #ffe3e3;
-            padding: 2px 6px;
+            background: rgba(56, 189, 248, 0.12);
+            padding: 2px 8px;
             border-radius: 6px;
             font-size: 11px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
         }
         .shop-fee {
-            color: #4a5568;
+            color: #94a3b8;
             font-size: 12px;
-            margin-top: 2px;
         }
         .placeholder-text {
             text-align: center;
-            color: #64748b;
-            font-size: 14px;
-            margin: 25px 0;
-            line-height: 1.5;
+            color: #475569;
+            font-size: 13.5px;
+            margin: 20px 0;
+            line-height: 1.6;
         }
     </style>
 </head>
@@ -126,14 +134,14 @@
 
 <div class="app-card">
     <div class="header">
-        <h1>🌲 中原大學 綠色循環杯地圖</h1>
+        <h1>🌲 CYCU 中原大學循環杯地圖</h1>
     </div>
     
     <div class="control-panel">
         <select id="location-select" onchange="updateLocation()">
             <option value="">📍 請選擇您目前的位置...</option>
             <option value="gate">中原大學校門口</option>
-            <option value="lixing">力行宿舍</option>
+            <option value="lixing">力行宿舍 (體育館旁)</option>
             <option value="zhenzhi">真知教學大樓</option>
             <option value="liangshan">良善宿舍</option>
         </select>
@@ -142,40 +150,35 @@
     <div id="map"></div>
 
     <div class="info-panel" id="shop-list">
-        <div class="placeholder-text">請選擇上方您的位置<br><span style="font-size:12px; color:#94a3b8;">將自動為您尋找最近的 5 個循環杯租借點</span></div>
+        <div class="placeholder-text">請選擇上方位置<br><span style="font-size:11px; color:#334155;">將自動為您鎖定最近的 5 個租借點與公尺距離</span></div>
     </div>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-    // 初始化地圖，預設定位在中原大學
-    const map = L.map('map', {
-        zoomControl: false 
-    }).setView([24.9575, 121.2408], 16);
-    
-    // 將縮放按鈕移到右下角
+    // 初始化地圖
+    const map = L.map('map', { zoomControl: false }).setView([24.9575, 121.2408], 16);
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // 【地圖外觀升級】換成高質感的 CARTO Voyager 開放圖層 (更加精美、配色現代)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    // 換上更高對比的 Dark Mode 科技感夜光圖層
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png', {
         subdomains: 'abcd',
         maxZoom: 20
     }).addTo(map);
 
-    // 定義 4 個起點的經緯度
+    // 【位置校正】力行宿舍座標已往南修正至新體育館與體育場旁路段
     const userLocations = {
         gate: { name: "中原大學校門口", coords: [24.9582, 121.2408] },
-        lixing: { name: "力行宿舍", coords: [24.9610, 121.2415] },
+        lixing: { name: "力行宿舍 (體育館旁)", coords: [24.9592, 121.2422] }, 
         zhenzhi: { name: "真知教學大樓", coords: [24.9571, 121.2406] },
         liangshan: { name: "良善宿舍", coords: [24.9565, 121.2425] }
     };
 
-    // 模擬中原大學周邊的循環杯租借店家資料
+    // 周邊循環杯店家
     const cupShops = [
         { name: "7-ELEVEN 中原大學門市", coords: [24.9581, 121.2405], fee: "免費租借 (押金 0 元，3 日內歸還)" },
         { name: "全家便利商店 中壢中原店", coords: [24.9568, 121.2431], fee: "免費租借 (押金 0 元，3 日內歸還)" },
-        { name: "路易莎咖啡 中原大學門市", coords: [24.9576, 121.2398], fee: "免費租借 (配合桃園環保局系統)" },
+        { name: "路易莎咖啡 中原大學門市", coords: [24.9576, 121.2398], fee: "免費租借 (配合桃園環保局)" },
         { name: "7-ELEVEN 恩源門市 (真知內)", coords: [24.9572, 121.2404], fee: "免費租借 (校內便利商店)" },
         { name: "全家便利商店 中壢新中原店", coords: [24.9595, 121.2422], fee: "免費租借 (無額外手續費)" },
         { name: "大苑子 中原店", coords: [24.9558, 121.2412], fee: "免費租借 (需使用 App 綁定)" },
@@ -185,72 +188,70 @@
     let currentMarkers = [];
     let userMarker = null;
 
-    // 哈維辛公式：計算經緯度直線距離 (km)
-    function getDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371; 
+    // 計算距離，並直接轉換成「公尺(m)」
+    function getDistanceInMeters(lat1, lon1, lat2, lon2) {
+        const R = 6371; // 地球半徑 (km)
         const dLat = (lat2 - lat1) * Math.PI / 180;
         const dLon = (lon2 - lon1) * Math.PI / 180;
         const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
                   Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        return R * c;
+        return Math.round(R * c * 1000); // 乘上 1000 換算成公尺，並進行四捨五入
     }
 
-    // 當下拉選單切換時執行
     function updateLocation() {
         const select = document.getElementById('location-select');
         const selectedValue = select.value;
         
-        // 清除地圖上舊的標記
         if (userMarker) map.removeLayer(userMarker);
         currentMarkers.forEach(marker => map.removeLayer(marker));
         currentMarkers = [];
 
         if (!selectedValue) {
-            document.getElementById('shop-list').innerHTML = '<div class="placeholder-text">請選擇上方您的位置<br><span style="font-size:12px; color:#94a3b8;">將自動為您尋找最近的 5 個租借點</span></div>';
+            document.getElementById('shop-list').innerHTML = '<div class="placeholder-text">請選擇上方位置<br><span style="font-size:11px; color:#334155;">將自動為您鎖定最近的 5 個租借點與公尺距離</span></div>';
             return;
         }
 
         const currentUserLoc = userLocations[selectedValue];
         const userCoords = currentUserLoc.coords;
 
-        // 將地圖中心移到選擇的起點並放大
-        map.setView(userCoords, 17);
-
         // 建立起點標記
         userMarker = L.marker(userCoords).addTo(map).bindPopup(`<b>📍 您在這裡：${currentUserLoc.name}</b>`).openPopup();
 
-        // 計算距離並排序
+        // 用陣列收集所有要顯示的標記座標，用來做自動視覺縮放
+        const boundsPoints = [userCoords];
+
+        // 計算距離 (公尺) 並排序
         const shopsWithDistance = cupShops.map(shop => {
-            const distance = getDistance(userCoords[0], userCoords[1], shop.coords[0], shop.coords[1]);
+            const distance = getDistanceInMeters(userCoords[0], userCoords[1], shop.coords[0], shop.coords[1]);
             return { ...shop, distance: distance };
         });
 
         shopsWithDistance.sort((a, b) => a.distance - b.distance);
-        const nearestShops = shopsWithDistance.slice(0, 5); // 篩選前 5 近的店家
+        const nearestShops = shopsWithDistance.slice(0, 5); 
 
-        // 渲染底部資訊欄與地圖標記
         let listHtml = "";
         nearestShops.forEach((shop, index) => {
-            const distanceStr = shop.distance.toFixed(3); // 格式化為小數點後三位
-            
             listHtml += `
                 <div class="shop-item">
                     <div class="shop-header">
                         <span class="shop-name">${index + 1}. ${shop.name}</span>
-                        <span class="shop-distance">📍 ${distanceStr} km</span>
+                        <span class="shop-distance">🏃 ${shop.distance} 公尺</span>
                     </div>
                     <div class="shop-fee">💰 費率：${shop.fee}</div>
                 </div>
             `;
 
-            // 在地圖上標示店家
             const shopMarker = L.marker(shop.coords).addTo(map)
-                .bindPopup(`<b>${shop.name}</b><br>距離: ${distanceStr} km<br>費率: ${shop.fee}`);
+                .bindPopup(`<b>${shop.name}</b><br>距離: ${shop.distance} 公尺<br>${shop.fee}`);
             currentMarkers.push(shopMarker);
+            boundsPoints.push(shop.coords); // 把店家座標也丟進縮放範圍陣列中
         });
 
         document.getElementById('shop-list').innerHTML = listHtml;
+
+        // 【智慧縮放優化】讓地圖自動縮放到「剛好把起點與 5 個店家通通包進畫面」的完美比例
+        map.fitBounds(boundsPoints, { padding: [40, 40] });
     }
 </script>
 
